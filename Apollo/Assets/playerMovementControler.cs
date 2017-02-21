@@ -17,6 +17,9 @@ public class playerMovementControler : MonoBehaviour {
 
 	private float groundRadius = 1f;
 
+    private bool doubleJump = true;
+
+
 	//Attack variables
 
 	private bool attacking = false;
@@ -33,14 +36,26 @@ public class playerMovementControler : MonoBehaviour {
 	}
 
 	void Update() {
-		if (grounded && Input.GetAxis ("Jump") > 0) {
-			grounded = false;
-			animator.SetBool ("onGround", grounded);
-			body.AddForce(new Vector2(0, jumpHeight));
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (grounded)
+            {
+                grounded = false;
+                animator.SetBool("onGround", grounded);
+                body.AddForce(new Vector2(0, jumpHeight));
+                doubleJump = true;
+            }
+            else if (doubleJump)
+            {
+                doubleJump = false;
+                animator.SetBool("onGround", false);
+                body.velocity = new Vector2(body.velocity.x, 0);
+                body.AddForce(new Vector2(0, jumpHeight));
+            }
+        }
 
-		}
 
-	}
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -49,6 +64,11 @@ public class playerMovementControler : MonoBehaviour {
 
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 		animator.SetBool ("onGround", grounded);
+        if (grounded)
+        {
+            doubleJump = true;
+        }
+        
 
 		animator.SetFloat ("verticalSpeed", body.velocity.y);
 
