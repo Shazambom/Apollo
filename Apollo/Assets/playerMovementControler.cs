@@ -15,7 +15,7 @@ public class playerMovementControler : MonoBehaviour {
 	//Jump variables
 	private bool grounded = false;
 
-	private float groundRadius = 0.6f;
+	private float groundRadius = 1f;
 
 	public LayerMask groundLayer;
 	public Transform groundCheck;
