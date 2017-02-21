@@ -17,6 +17,10 @@ public class playerMovementControler : MonoBehaviour {
 
 	private float groundRadius = 1f;
 
+	//Attack variables
+
+	private bool attacking = false;
+
 	public LayerMask groundLayer;
 	public Transform groundCheck;
 	public float jumpHeight;
@@ -46,13 +50,6 @@ public class playerMovementControler : MonoBehaviour {
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 		animator.SetBool ("onGround", grounded);
 
-		if(Input.GetKeyDown(KeyCode.E)) {
-			animator.SetBool("isAttacking", true);
-		} 
-		else {
-			animator.SetBool("isAttacking", false);
-		}
-
 		animator.SetFloat ("verticalSpeed", body.velocity.y);
 
 
@@ -67,6 +64,18 @@ public class playerMovementControler : MonoBehaviour {
 
 		} else if (move > 0 && facingRight) {
 			flip ();
+		}
+
+		if(Input.GetKey(KeyCode.E)) {
+			if (!attacking) {
+				attacking = true;
+				animator.SetBool ("attack", attacking);
+			}
+
+		} 
+		else {
+			attacking = false;
+			animator.SetBool("attack", attacking);
 		}
 
 
