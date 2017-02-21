@@ -41,10 +41,20 @@ public class playerMovementControler : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		//check if we are grounded
+
+
 		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
 		animator.SetBool ("onGround", grounded);
 
+		if(Input.GetKeyDown(KeyCode.E)) {
+			animator.SetBool("isAttacking", true);
+		} 
+		else {
+			animator.SetBool("isAttacking", false);
+		}
+
 		animator.SetFloat ("verticalSpeed", body.velocity.y);
+
 
 
 		float move = Input.GetAxis("Horizontal");
@@ -58,6 +68,8 @@ public class playerMovementControler : MonoBehaviour {
 		} else if (move > 0 && facingRight) {
 			flip ();
 		}
+
+
 		
 	}
 
