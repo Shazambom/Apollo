@@ -15,7 +15,7 @@ public class playerMovementControler : MonoBehaviour {
 	//Jump variables
 	private bool grounded = false;
 
-	private float groundRadius = 1f;
+	private float groundRadius = 0.2f;
 
     private bool doubleJump = true;
 
@@ -28,8 +28,17 @@ public class playerMovementControler : MonoBehaviour {
 	public Transform groundCheck;
 	public float jumpHeight;
 
-	// Use this for initialization
-	void Start () {
+    //Wall sliding variables
+    public LayerMask wallLayer;
+    public Transform frontWallCheck;
+    public Transform behindWallCheck;
+    public float wallFallRate;
+    private bool onWallFront;
+    private bool onWallBehind;
+    private float wallRadius = 0.01f;
+
+    // Use this for initialization
+    void Start () {
 		body = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
 		
@@ -59,23 +68,50 @@ public class playerMovementControler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		//check if we are grounded
+        //check if we are grounded
+
+        
+
+        grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
+        animator.SetBool ("onGround", grounded);
+
+        onWallFront = Physics2D.OverlapCircle(frontWallCheck.position, wallRadius, wallLayer);
+        onWallBehind = Physics2D.OverlapCircle(behindWallCheck.position, wallRadius, wallLayer);
+        bool onWall = (onWallFront || onWallBehind) && !grounded;
+        animator.SetBool("onWall", onWall);
 
 
-		grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
-		animator.SetBool ("onGround", grounded);
         if (grounded)
         {
             doubleJump = true;
-        }
-        
+        } 
+        if (onWall)
+        {
+            if (onWall && body.velocity.y < 0)
+            {
+                body.velocity = new Vector2(body.velocity.x, -wallFallRate);
+            }
 
-		animator.SetFloat ("verticalSpeed", body.velocity.y);
+            if (onWallFront)
+            {
+                doubleJump = true;
+                flip();
+
+            }
+        }
+
+
+
+        animator.SetFloat ("verticalSpeed", body.velocity.y);
 
 
 
 		float move = Input.GetAxis("Horizontal");
 		animator.SetFloat ("speed", Mathf.Abs (move));
+        if ((move < 0 && !facingRight && onWall) || (move > 0 && facingRight && onWall))
+        {
+            move = 0;
+        } 
 
 		body.velocity = new Vector2 (move * MAX_SPEED, body.velocity.y);
 
@@ -107,6 +143,5 @@ public class playerMovementControler : MonoBehaviour {
 		Vector3 scale = transform.localScale;
 		scale.x *= -1;
 		transform.localScale = scale;
-
-	}
+    }
 }
