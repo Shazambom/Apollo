@@ -37,6 +37,14 @@ public class playerMovementControler : MonoBehaviour {
     private bool onWallBehind;
     private float wallRadius = 0.01f;
 
+    //Fast Fall Rate
+    public float fastFallRate;
+
+    //Dash attack
+    private bool dashAttack = false;
+    public float dashForce;
+    private int currFrame = 0;
+
     // Use this for initialization
     void Start () {
 		body = GetComponent<Rigidbody2D> ();
@@ -62,6 +70,12 @@ public class playerMovementControler : MonoBehaviour {
                 body.AddForce(new Vector2(0, jumpHeight));
             }
         }
+        if (Input.GetAxis("Vertical") < 0)
+        {
+            body.AddForce(new Vector2(0, -fastFallRate));
+        }
+
+        
 
 
     }
@@ -134,9 +148,37 @@ public class playerMovementControler : MonoBehaviour {
 			animator.SetBool("attack", attacking);
 		}
 
+        if (Input.GetKey(KeyCode.F) && grounded && Time.frameCount - currFrame > 30 && move != 0)
+        {
+            if (!dashAttack)
+            {
+                currFrame = Time.frameCount;
+                dashAttack = true;
+                animator.SetBool("dashAttack", dashAttack);
+            }
+        }
+        else
+        {
+            dashAttack = false;
+            animator.SetBool("dashAttack", dashAttack);
+        }
+        if (Time.frameCount - currFrame < 1 && dashAttack)
+        {
+            float direction = 0;
+            if (facingRight)
+            {
+                direction = -1;
+            }
+            else
+            {
+                direction = 1;
+            }
+            body.velocity = new Vector2(direction * dashForce, body.velocity.y);
+        } 
 
-		
-	}
+
+
+    }
 
 	void flip() {
 		facingRight = !facingRight;
