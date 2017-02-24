@@ -43,14 +43,24 @@ public class playerMovementControler : MonoBehaviour {
     //Dash attack
     private bool dashAttack = false;
     public float dashForce;
-    private int currFrame = 0;
+
+    //Hitboxes
+    public GameObject basicHitTransform;
+    private PolygonCollider2D basicHitBox;
+
+    
 
     // Use this for initialization
     void Start () {
 		body = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
-		
-	}
+        basicHitBox = basicHitTransform.GetComponent<PolygonCollider2D>();
+        Physics2D.IgnoreLayerCollision(10, 9);
+        Physics2D.IgnoreLayerCollision(10, 8);
+
+
+
+    }
 
 	void Update() {
         if (Input.GetButtonDown("Jump"))
@@ -148,11 +158,10 @@ public class playerMovementControler : MonoBehaviour {
 			animator.SetBool("attack", attacking);
 		}
 
-        if (Input.GetKey(KeyCode.F) && grounded && Time.frameCount - currFrame > 30 && move != 0)
+        if (Input.GetKey(KeyCode.F) && grounded && !animator.GetCurrentAnimatorStateInfo(0).IsName("PixelCharAnim_Sword_slideAtk") && move != 0)
         {
             if (!dashAttack)
             {
-                currFrame = Time.frameCount;
                 dashAttack = true;
                 animator.SetBool("dashAttack", dashAttack);
             }
@@ -162,7 +171,7 @@ public class playerMovementControler : MonoBehaviour {
             dashAttack = false;
             animator.SetBool("dashAttack", dashAttack);
         }
-        if (Time.frameCount - currFrame < 1 && dashAttack)
+        if (dashAttack)
         {
             float direction = 0;
             if (facingRight)
@@ -175,8 +184,17 @@ public class playerMovementControler : MonoBehaviour {
             }
             body.velocity = new Vector2(direction * dashForce, body.velocity.y);
         } 
-
-
+        if (attacking)
+        {
+            basicHitBox.enabled = true;
+        } else 
+        {
+            AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
+            if (!info.IsName("PixelCharAnim_Sword_mediumAtk") && !info.IsName("fastJumpAttack"))
+            {
+                basicHitBox.enabled = false;
+            }
+        }
 
     }
 

@@ -81,7 +81,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BasicEnemyController.cs" />
+    <Compile Include="Assets\ColliderBehavior.cs" />
+    <Compile Include="Assets\EnemyController.cs" />
     <Compile Include="Assets\playerMovementControler.cs" />
   </ItemGroup>
   <ItemGroup>
