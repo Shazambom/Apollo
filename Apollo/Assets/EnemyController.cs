@@ -36,7 +36,7 @@ namespace Enemy
                 body.velocity = new Vector2(force * direction.x, force * direction.y);
             }
         }
-        public void kill()
+        public void hit()
         {
             Destroy(self);
         }

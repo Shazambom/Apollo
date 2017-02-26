@@ -9,7 +9,7 @@ public class ColliderBehavior : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            ((EnemyController)collision.gameObject.GetComponent(typeof(EnemyController))).kill();
+            ((EnemyController)collision.gameObject.GetComponent(typeof(EnemyController))).hit();
             //Destroy(collision.gameObject);
         }
     }
